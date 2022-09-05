@@ -79,4 +79,21 @@ const updateBlogPost = async (id, userId, { title, content }) => {
   return { code: 200, data: newPost.data };
 };
 
-module.exports = { createBlogPost, getBlogPostsAll, getBlogPostId, updateBlogPost };
+const deleteBlogPost = async (id, userId) => {
+  const { data } = await getBlogPostId(id);
+
+  if (!data) return { code: 404, message: 'Post does not exist' };
+  
+  if (data.user.id !== userId) return { code: 401, message: 'Unauthorized user' };
+  
+  await BlogPost.destroy({ where: { id } });
+
+  return { code: 204 };
+};
+
+module.exports = {
+  createBlogPost,
+  getBlogPostsAll,
+  getBlogPostId,
+  updateBlogPost,
+  deleteBlogPost };
