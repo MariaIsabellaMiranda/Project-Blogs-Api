@@ -3,6 +3,8 @@ const rescue = require('../middlewares/rescue');
 const tokenAuth = require('../middlewares/auth');
 const blogPostController = require('../controllers/blogPostController');
 
+router.get('/search', tokenAuth.validToken, rescue(blogPostController.getSearchBlogPost));
+
 router.post('/', tokenAuth.validToken, rescue(blogPostController.createBlogPost));
 
 router.get('/', tokenAuth.validToken, rescue(blogPostController.getBlogPostsAll));
