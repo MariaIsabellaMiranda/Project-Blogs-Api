@@ -32,4 +32,10 @@ const getUserId = async (id) => {
   return { code: 200, data };
 };
 
-module.exports = { createUser, getUserAll, getUserId };
+const deleteUser = async (userId) => {
+  await User.destroy({ where: { id: userId } });
+
+  return { code: 204 };
+};
+
+module.exports = { createUser, getUserAll, getUserId, deleteUser };
