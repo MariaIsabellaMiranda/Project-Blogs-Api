@@ -4,6 +4,7 @@ const { BlogPost, PostCategory, User, Category } = require('../database/models')
 const validation = require('../helpers/blogPostValidation');
 
 const sequelize = new Sequelize(config.development);
+const { Op } = Sequelize;
 
 const createNewPost = async ({ title, content, categoryIds }, userId) => {
   try {
@@ -43,7 +44,7 @@ const getBlogPostsAll = async () => {
       model: User, as: 'user', attributes: { exclude: ['password'] },
     },
     {
-      model: Category, as: 'categories',
+      model: Category, as: 'categories', through: { attributes: [] },
     }],
   });
 
@@ -56,7 +57,7 @@ const getBlogPostId = async (id) => {
       model: User, as: 'user', attributes: { exclude: ['password'] },
     },
     {
-      model: Category, as: 'categories',
+      model: Category, as: 'categories', through: { attributes: [] },
     }],
   });
 
@@ -91,9 +92,29 @@ const deleteBlogPost = async (id, userId) => {
   return { code: 204 };
 };
 
+const getSearchBlogPost = async (search) => {
+  console.log('Testando aqui:', search);
+  const data = await BlogPost.findAll({ where: { [Op.or]: [
+    { title: { [Op.like]: `%${search}%` } },
+    { content: { [Op.like]: `%${search}%` } },
+  ] },
+    include: [{
+      model: User, as: 'user', attributes: { exclude: ['password'] },
+    },
+    {
+      model: Category, as: 'categories', through: { attributes: [] },
+    }],
+  });
+
+  if (!data) return { code: 200, data: [] };
+
+  return { code: 200, data };
+};
+
 module.exports = {
   createBlogPost,
   getBlogPostsAll,
   getBlogPostId,
   updateBlogPost,
-  deleteBlogPost };
+  deleteBlogPost,
+  getSearchBlogPost };
