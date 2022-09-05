@@ -27,14 +27,12 @@ const createNewPost = async ({ title, content, categoryIds }, userId) => {
   }
 };
 
-const createBlogPost = async (post, email) => {
+const createBlogPost = async (post, userId) => {
   const validPost = await validation.blogPostValidation(post);
 
   if (validPost) return validPost;
 
-  const { id } = await User.findOne({ where: { email } });
-
-  const data = await createNewPost(post, id);
+  const data = await createNewPost(post, userId);
 
   return { code: 201, data };
 };
@@ -67,4 +65,18 @@ const getBlogPostId = async (id) => {
   return { code: 200, data };
 };
 
-module.exports = { createBlogPost, getBlogPostsAll, getBlogPostId };
+const updateBlogPost = async (id, userId, { title, content }) => {
+  if (!title || !content) return { code: 400, message: 'Some required fields are missing' };
+  
+  const { data } = await getBlogPostId(id);
+  
+  if (data.user.id !== userId) return { code: 401, message: 'Unauthorized user' };
+  
+  await BlogPost.update({ title, content }, { where: { id } });
+
+  const newPost = await getBlogPostId(id);
+
+  return { code: 200, data: newPost.data };
+};
+
+module.exports = { createBlogPost, getBlogPostsAll, getBlogPostId, updateBlogPost };
