@@ -9,4 +9,6 @@ router.get('/', tokenAuth.validToken, rescue(userController.getUserAll));
 
 router.get('/:id', tokenAuth.validToken, rescue(userController.getUserId));
 
+router.delete('/me', tokenAuth.validToken, rescue(userController.deleteUser));
+
 module.exports = router;
