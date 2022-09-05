@@ -4,5 +4,6 @@ const tokenAuth = require('../middlewares/auth');
 const blogPostController = require('../controllers/blogPostController');
 
 router.post('/', tokenAuth.validToken, rescue(blogPostController.createBlogPost));
+router.get('/', tokenAuth.validToken, rescue(blogPostController.getBlogPostsAll));
 
 module.exports = router;
