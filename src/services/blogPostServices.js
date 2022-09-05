@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
 const config = require('../database/config/config');
-const { BlogPost, PostCategory, User } = require('../database/models');
+const { BlogPost, PostCategory, User, Category } = require('../database/models');
 const validation = require('../helpers/blogPostValidation');
 
 const sequelize = new Sequelize(config.development);
@@ -12,12 +12,11 @@ const createNewPost = async ({ title, content, categoryIds }, userId) => {
         title, content, userId,
       }, { transaction: t });
       
-      await Promise.all(
-        categoryIds.map((category) =>
-        PostCategory.create({
-          postId: id, categoryId: category,
-        }, { transaction: t })),
-        );
+      const categories = categoryIds.map((category) => (
+        { postId: id, categoryId: category }
+      ));
+
+      await PostCategory.bulkCreate(categories, { transaction: t });
 
         return { id, title, content, userId, updated, published };
       });
@@ -40,4 +39,17 @@ const createBlogPost = async (post, email) => {
   return { code: 201, data };
 };
 
-module.exports = { createBlogPost };
+const getBlogPostsAll = async () => {
+  const data = await BlogPost.findAll({
+    include: [{
+      model: User, as: 'user', attributes: { exclude: ['password'] },
+    },
+    {
+      model: Category, as: 'categories',
+    }],
+  });
+
+  return { code: 200, data };
+};
+
+module.exports = { createBlogPost, getBlogPostsAll };
