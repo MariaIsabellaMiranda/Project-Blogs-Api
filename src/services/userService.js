@@ -11,9 +11,9 @@ const createUser = async (user) => {
   
   if (verifyEmail) return verifyEmail;
 
-  const token = tokenHelper.createToken(user.email);
+  const newUser = await User.create(user);
 
-  await User.create(user);
+  const token = tokenHelper.createToken(user.email, newUser.id);
 
   return { code: 201, data: token };
 };
