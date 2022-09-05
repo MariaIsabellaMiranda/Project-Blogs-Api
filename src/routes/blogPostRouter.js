@@ -11,4 +11,6 @@ router.get('/:id', tokenAuth.validToken, rescue(blogPostController.getBlogPostId
 
 router.put('/:id', tokenAuth.validToken, rescue(blogPostController.updateBlogPost));
 
+router.delete('/:id', tokenAuth.validToken, rescue(blogPostController.deleteBlogPost));
+
 module.exports = router;
