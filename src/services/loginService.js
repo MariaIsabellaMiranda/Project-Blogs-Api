@@ -10,7 +10,7 @@ const login = async (email, password) => {
     return { code: 400, message: 'Invalid fields' };
   }
 
-  const token = tokenHelper.createToken(email);
+  const token = tokenHelper.createToken(email, data.id);
 
   return { code: 200, data: token };
 };
