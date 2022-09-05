@@ -93,7 +93,6 @@ const deleteBlogPost = async (id, userId) => {
 };
 
 const getSearchBlogPost = async (search) => {
-  console.log('Testando aqui:', search);
   const data = await BlogPost.findAll({ where: { [Op.or]: [
     { title: { [Op.like]: `%${search}%` } },
     { content: { [Op.like]: `%${search}%` } },
