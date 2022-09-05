@@ -2,10 +2,10 @@ const blogPostServices = require('../services/blogPostServices');
 
 const createBlogPost = async (req, res) => {
   const { title, content, categoryIds } = req.body;
-  const { email } = req.user;
+  const { userId } = req.user;
 
   const { code, data, message } = await blogPostServices
-  .createBlogPost({ title, content, categoryIds }, email);
+  .createBlogPost({ title, content, categoryIds }, userId);
 
   if (!data) return res.status(Number(code)).json({ message });
 
@@ -28,4 +28,15 @@ const getBlogPostId = async (req, res) => {
   res.status(code).json(data);
 };
 
-module.exports = { createBlogPost, getBlogPostsAll, getBlogPostId };
+const updateBlogPost = async (req, res) => {
+  const { id } = req.params;
+  const { userId } = req.user;
+
+  const { code, data, message } = await blogPostServices.updateBlogPost(id, userId, req.body);
+
+  if (!data) return res.status(code).json({ message });
+
+  res.status(code).json(data);
+};
+
+module.exports = { createBlogPost, getBlogPostsAll, getBlogPostId, updateBlogPost };
